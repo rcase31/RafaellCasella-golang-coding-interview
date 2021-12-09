@@ -6,7 +6,7 @@ import (
 
 type State struct {
 	gorm.Model
-	Id   string `json: "id"`
+	ID   string `json: "id"`
 	Code string `json: "code"`
 	Name string `json: "name"`
 }

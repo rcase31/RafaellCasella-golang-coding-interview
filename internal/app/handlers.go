@@ -2,12 +2,9 @@ package app
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"text/template"
-
-	"github.com/BEON-Tech-Studio/golang-live-coding-challenge/internal/models"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,24 +14,32 @@ var htmlTemplates map[string]*template.Template
 type params map[string]interface{}
 
 func home(c echo.Context) error {
-	return c.HTML(http.StatusOK, execTemplate("home", params{"content": ""}))
+	return c.HTML(http.StatusOK, execTemplateFromBase("Home", "home", params{}))
 }
 
-func displayStates(c echo.Context) error {
-	var states []models.State
-
-	jsonData, err := FetchStates()
+func getStates(c echo.Context) error {
+	statesData, err := FetchStates()
 	if err != nil {
 		return err
 	}
 
-	err = json.Unmarshal([]byte(jsonData), &states)
-	if err != nil {
-		return err
-	}
-
-	statesHtml := execTemplate("statesSection", params{})
+	statesHtml := execTemplateFromBase("States", "states", params{
+		"states":       statesData.States,
+		"row_template": htmlTemplates["states-row"],
+	})
 	return c.HTML(http.StatusOK, statesHtml)
+}
+
+// Helpers
+
+func execTemplateFromBase(title, templateName string, p params) string {
+	return execTemplate(
+		"base-template",
+		params{
+			"title": title,
+			"body":  execTemplate(templateName, p),
+		},
+	)
 }
 
 func execTemplate(templateName string, p params) string {

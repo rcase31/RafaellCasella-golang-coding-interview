@@ -1,10 +1,11 @@
 package app
 
 import (
-	"strconv"
-	"time"
+	"encoding/json"
+	"errors"
 
 	"github.com/go-resty/resty/v2"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -13,32 +14,34 @@ const (
 	statesUri = "/arms/state"
 )
 
-var (
-	defaultQueryParams = map[string]string{
-		"page_no": "1",
-		"limit":   "20",
-		"sort":    "name",
-		"order":   "asc",
-		"random":  strconv.FormatInt(time.Now().Unix(), 10),
-	}
-)
-
-func FetchStates() ([]byte, error) {
-	resp, err := getClient().R().Get(statesUri)
+func FetchStates() (StatesResponse, error) {
+	resp, err := getBaseRequest().Get(statesUri)
 	if err != nil {
-		return []byte{}, err
+		return StatesResponse{}, err
+	}
+	if resp.IsError() {
+		return StatesResponse{}, errors.New(resp.String())
 	}
 
-	return resp.Body(), nil
+	var statesData StatesResponse
+	err = json.Unmarshal(resp.Body(), &statesData)
+	if err != nil {
+		return StatesResponse{}, err
+	}
+
+	return statesData, nil
 }
 
-func getClient() *resty.Client {
-	client := resty.New()
-	client.SetHostURL(baseUrl)
-	client.SetHeader("Accept", "application/json")
-	client.SetQueryParams(defaultQueryParams)
-	client.SetError(DefaultError{"An error occurred"})
-	return client
+func getBaseRequest() *resty.Request {
+	req := resty.New().SetHostURL(baseUrl).R()
+
+	req.SetHeader("Accept", "application/json")
+	req.SetError(DefaultError{"An error occurred"})
+
+	req.SetQueryParams(map[string]string{
+		"api_key": viper.GetString("api-key"),
+	})
+	return req
 }
 
 type DefaultError struct {

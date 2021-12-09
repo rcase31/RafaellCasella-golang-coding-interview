@@ -34,6 +34,8 @@ func listenAndServe(port string) {
 
 	// Routes
 	e.GET("/", home)
+	e.GET("/home", home)
+	e.GET("/states", getStates)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":" + port))
