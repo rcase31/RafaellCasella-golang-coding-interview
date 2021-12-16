@@ -6,18 +6,30 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"text/template"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/viper"
+	"gorm.io/gorm"
 )
 
-func Start() {
+var (
+	SetDB sync.Once
+
+	db *gorm.DB
+)
+
+func Start(database *gorm.DB) {
 	err := initHtmlTemplates()
 	if err != nil {
 		panic(err)
 	}
+
+	SetDB.Do(func() {
+		db = database
+	})
 
 	port := fmt.Sprintf("%d", viper.GetInt("port"))
 	fmt.Println("Listening in port: " + port)
@@ -32,10 +44,14 @@ func listenAndServe(port string) {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	// Routes
+	// HTML endpoints
 	e.GET("/", home)
 	e.GET("/home", home)
 	e.GET("/states", getStates)
+
+	// REST endpoints
+	e.GET("api/states", getStatesJson)
+	e.GET("api/categories", getCategoriesJson)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":" + port))

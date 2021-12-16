@@ -4,19 +4,21 @@
 
 ## Requirements
 
-- Golang ([Download](https://golang.org/doc/install))
-- MySQL ([Download](https://dev.mysql.com/downloads/))
+- [Docker and Docker Compose](https://docs.docker.com/compose/install/)
 - Your preferred API Client
 
 ***
 
 ## Setting up the environment
 
-First, clone the repository locally 
+First, clone the repository locally, then run:
 
-Before running the software, access MySQL with your user and password and simply do a `CREATE DATABASE golang_challenge;`. After that, set the appropriate values in `config/config.json`.
+```
+docker-compose build
+docker-compose up
+```
 
-You should be able to start the server now with `go run ./internal/main`
+You should now be able to go to `localhost:8080` and get the home view
 
 Use Postman or any other API client to test the endpoints
 

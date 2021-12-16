@@ -7,6 +7,8 @@ import (
 	"text/template"
 
 	"github.com/labstack/echo/v4"
+
+	"github.com/BEON-Tech-Studio/golang-live-coding-challenge/internal/models"
 )
 
 var htmlTemplates map[string]*template.Template
@@ -18,16 +20,45 @@ func home(c echo.Context) error {
 }
 
 func getStates(c echo.Context) error {
+	var states []models.State
+
+	result := db.Find(&states)
+	if result.RowsAffected == 0 {
+		statesData, err := FetchStates()
+		if err != nil {
+			return err
+		}
+		states = statesData.States
+	}
+
+	statesHtml := execTemplateFromBase("States", "states", params{
+		"states":       states,
+		"row_template": htmlTemplates["states-row"],
+	})
+	return c.HTML(http.StatusOK, statesHtml)
+}
+
+func getStatesJson(c echo.Context) error {
 	statesData, err := FetchStates()
 	if err != nil {
 		return err
 	}
 
-	statesHtml := execTemplateFromBase("States", "states", params{
-		"states":       statesData.States,
-		"row_template": htmlTemplates["states-row"],
-	})
-	return c.HTML(http.StatusOK, statesHtml)
+	if err := c.Bind(statesData.States); err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, statesData.States)
+}
+
+func getCategoriesJson(c echo.Context) error {
+	var categories []models.Category
+
+	if err := c.Bind(categories); err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, categories)
 }
 
 // Helpers
