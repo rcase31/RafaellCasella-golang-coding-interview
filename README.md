@@ -1,6 +1,6 @@
 ![BEON LOGO](https://beon.studio/blog/wp-content/themes/twentybeon/app/images/beon-purple.png)
 
-# Golang Coding Challenge
+# Golang Coding Exercise
 
 ## Requirements
 
