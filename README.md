@@ -1,4 +1,4 @@
-![BEON LOGO](https://beon.studio/blog/wp-content/themes/twentybeon/app/images/beon-purple.png)
+![BEON LOGO](https://beontech.wpengine.com/wp-content/themes/Archive/app/images/navbar-logo.png)
 
 # Golang Coding Exercise
 
@@ -21,6 +21,15 @@ docker-compose up
 You should now be able to go to `localhost:8080` and get the home view
 
 Use Postman or any other API client to test the endpoints
+
+## Running Tests
+
+The project includes some test to validate handlers and functionality:
+
+### Run All Tests
+```bash
+go test ./internal/app/ -v
+```
 
 ***
 

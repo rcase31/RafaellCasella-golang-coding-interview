@@ -12,6 +12,8 @@ services:
     depends_on:
       - database
     container_name: golang-docker-server
+    networks:
+      - golang-live-coding
 
   database:
     platform: linux/x86_64
@@ -27,8 +29,13 @@ services:
     ports:
       - 33066:3306
     volumes:
-      - golang-live-coding-challenge-data:/var/lib/mysql 
+      - golang-live-coding-challenge-data:/var/lib/mysql
+    networks:
+      - golang-live-coding
 
+networks:
+  golang-live-coding:
+    driver: bridge
 # persisted storage
 volumes:
   golang-live-coding-challenge-data:

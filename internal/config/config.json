@@ -4,7 +4,7 @@
     "db": {
         "username": "admin",
         "password": "123456",
-        "dbhost": "host.docker.internal:33066",
+        "dbhost": "database:3306",
         "dbname": "golang_coding_interview"
     }
 }
