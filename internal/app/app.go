@@ -51,7 +51,11 @@ func listenAndServe(port string) {
 
 	// REST endpoints
 	e.GET("api/states", getStatesJson)
+	e.GET("api/states/:id", getStatesByIDJson)
 	e.GET("api/categories", getCategoriesJson)
+	e.GET("api/reports", getReports)
+
+	e.POST("api/fetch_states", fetchStates)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":" + port))

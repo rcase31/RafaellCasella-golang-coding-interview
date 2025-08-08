@@ -11,8 +11,27 @@ import (
 const (
 	baseUrl = "https://api.ers.usda.gov/data"
 
-	statesUri = "/arms/state"
+	statesUri  = "/arms/state"
+	reportsUri = "/arms/report"
 )
+
+func FetchReports() (ReportsResponse, error) {
+	resp, err := getBaseRequest().Get(reportsUri)
+	if err != nil {
+		return ReportsResponse{}, err
+	}
+	if resp.IsError() {
+		return ReportsResponse{}, errors.New(resp.String())
+	}
+
+	var reportData ReportsResponse
+	err = json.Unmarshal(resp.Body(), &reportData)
+	if err != nil {
+		return ReportsResponse{}, err
+	}
+
+	return reportData, nil
+}
 
 func FetchStates() (StatesResponse, error) {
 	resp, err := getBaseRequest().Get(statesUri)

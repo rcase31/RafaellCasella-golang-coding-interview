@@ -10,3 +10,11 @@ type State struct {
 	Code string `json: "code"`
 	Name string `json: "name"`
 }
+
+type Report struct {
+	gorm.Model
+	Num         int    `json: "num"`
+	Header      string `json: "header"`
+	Description string `json: "description"`
+	Terms       string `json: "terms"`
+}
